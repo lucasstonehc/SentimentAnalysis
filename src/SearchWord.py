@@ -3,15 +3,19 @@ import re
 
 class Node:
 
-    def __init__(self, day, month):
+    def __init__(self, day, month, word):
         self.day = day
         self.month = month
+        self.word = word
 
     def get_day(self):
         return self.day
 
     def get_month(self):
         return self.month
+    
+    def get_word(self):
+        return self.word
 
 class SearchWord:
 
@@ -81,16 +85,47 @@ class SearchWord:
                                 day =  day_month[0] #the index 0 represent day
                                 month = day_month[1] #and the index 1 represent month
 
-                                self.day_months.append(Node(day,month))
+                                self.day_months.append(Node(day,month,word))
                             else:
                                 print('day and month havent found!')
                         #else:
                             #print("String not found!")
         except:
             print("something went wrongs")
-      
+    
+    def numberMonth(self, month):
+        months = {"Janeiro": "01","Fevereiro": "02","Março": "03","Abril": "04","Maio": "05",
+            "Junho": "06","Julho": "07","Agosto": "08","Setembro": "09","Outubro": "10","Novembro": "11",
+            "Dezembro": "12"} #this is a dictionary
+        return months[month] #return to us the currently month in number
 
     def findBlockByBlock(self):
+        months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto",
+        "Setembro","Outubro","Novembro","Dezembro"]
+        current_month = "Janeiro" # default
+        try: 
+            file = open(self.nameFile,'r')
+            if file.mode == 'r':
+                lines = file.readlines() #i dont to take about stackoverflow because my scope is little
+                file.close()
+                for string in lines:
+                    for month in months: #this for it is to verefy of month on line
+                        match = re.search(months,string)# if we find the month we have to save it
+                        if(match):
+                            current_month = match.group(0)
+                            
+                    for word in self.words:
+                        match = re.search(word,string)
+                        if(match):
+                            #I need get the day
+                            day_match = re.search(r'[0-3][0-9]', string)# return  to us a day if it exist
+                            day =  day_match[0]
+                            month = self.numberMonth(current_month)#month in number
+
+                            self.day_months.append(Node(day,month,word))
+        except:
+            print("Something went wrongs")
+
         return None
         
 def test():
@@ -130,13 +165,19 @@ def test():
         print(day_month[0])
         print(day_month[1])
 
+def month_test():
+    months = {"Janeiro": "01","Fevereiro": "02","Março": "03","Abril": "04","Maio": "05",
+        "Junho": "06","Julho": "07","Agosto": "08","Setembro": "09","Outubro": "10","Novembro": "11",
+        "Dezembro": "12"} #this is a dictionary
+    print(months["Janeiro"])
+
 def main():
     #test()
-    sWord = SearchWord()
-    sWord.set_nameFile('ifmg-ourobranco-tecnico.txt')
-    sWord.findLineByLine()
-    for node in sWord.day_months:
-        print(node.get_day()," ",node.get_month())
-
+    #sWord = SearchWord()
+    #sWord.set_nameFile('ourobranco.txt')
+    #sWord.findLineByLine()
+    #for node in sWord.day_months:
+        #print(node.get_day()," ",node.get_month()," ", node.get_word())
+    month_test()
 if __name__ == "__main__":
     main()
