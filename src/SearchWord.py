@@ -3,12 +3,9 @@ import re
 
 class Node:
 
-    day = None
-    month = None
-
     def __init__(self, day, month):
-        day = self.day
-        month = self.month
+        self.day = day
+        self.month = month
 
     def get_day(self):
         return self.day
@@ -44,13 +41,18 @@ class SearchWord:
     
     nameFile = None #variable created to recieve the path of file
 
-    day_months = []
+    day_months = [] #it is array of Nodes and Node has attributes as day and month
 
 
     def __init__(self):
         return None
+    
     def set_nameFile(self, nameFile):
         self.nameFile =  nameFile
+    
+    def get_day_months(self):
+        return self.day_months
+
     #this function get all information when calender likes this:
     #data - information
     #read data line by line
@@ -69,8 +71,8 @@ class SearchWord:
                         #for to each word in my list of words
                         match = re.search(word,string)
                         if (match):# if match we have try to get the month and day.
-                            print("String found at: " , match.start())
-                            day_month_match = re.search(r'[0-3][0-9][/]', word)
+                            #print("String found at: " , match.start())
+                            day_month_match = re.search(r'[0-3][0-9]\/[0-1][0-9]', string)
                             if (day_month_match):
                                 day_month = day_month_match.group(0).split('/') #return for us day and month
                                 #funtion here to split date
@@ -82,8 +84,8 @@ class SearchWord:
                                 self.day_months.append(Node(day,month))
                             else:
                                 print('day and month havent found!')
-                        else:
-                            print("String not found!")
+                        #else:
+                            #print("String not found!")
         except:
             print("something went wrongs")
       
@@ -114,19 +116,27 @@ def test():
     #[0-0] [1-2]
     for strs in strings:
         #00 - 31
-        match = re.search(r'[0-3][0-1][/]',strs)
+        match = re.search(r'[0-3][0-9]\/[0-1][0-9]',strs)
         if (match):
             print("String found at: " , match.start())
             print(match.group(0))
         else:
             print("String not found!")
-
+    
+    word = 'Recuperação'
+    match = re.search(r'[0-3][0-9]\/[0-1][0-9]','20/09 ■ Notas Recuperação 2º trimestre')
+    if(match):
+        day_month = match.group(0).split('/')
+        print(day_month[0])
+        print(day_month[1])
 
 def main():
-    test()
-    #sWord = SearchWord()
-    #sWord.set_nameFile('ifmg-formiga-tecnico.txt')
-    #sWord.findLineByLine()
+    #test()
+    sWord = SearchWord()
+    sWord.set_nameFile('ifmg-ourobranco-tecnico.txt')
+    sWord.findLineByLine()
+    for node in sWord.day_months:
+        print(node.get_day()," ",node.get_month())
 
 if __name__ == "__main__":
     main()
