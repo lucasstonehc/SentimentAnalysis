@@ -110,24 +110,32 @@ class SearchWord:
                 file.close()
                 for string in lines:
                     for month in months: #this for it is to verefy of month on line
-                        match = re.search(months,string)# if we find the month we have to save it
+                        match = re.search(month,string)# if we find the month we have to save it
+                        if(match):
+                            current_month = match.group(0)
+                    
+                    for month in months: #this for it is to verefy of month on line
+                        match = re.search(str.upper(month),string)# if we find the month we have to save it
                         if(match):
                             current_month = match.group(0)
                             
                     for word in self.words:
                         match = re.search(word,string)
+                        #print(word," ",string)
                         if(match):
                             #I need get the day
-                            day_match = re.search(r'[0-3][0-9]', string)# return  to us a day if it exist
-                            day =  day_match[0]
-                            month = self.numberMonth(current_month)#month in number
-
-                            self.day_months.append(Node(day,month,word))
-        except:
+                            day_match = re.search(r'[0-3][0-9]', string) # return  to us a day if it exist
+                            if(day_match):
+                                day = day_match.group(0)
+                                month = self.numberMonth(str.lower(current_month).capitalize())#month in number
+                                self.day_months.append(Node(day,month,word))
+                            
+        except ValueError as valerr:
             print("Something went wrongs")
+            Print("error is ", valerr) 
 
         return None
-        
+#this is a test function        
 def test():
     #day and month
     #re = [/]
@@ -164,20 +172,22 @@ def test():
         day_month = match.group(0).split('/')
         print(day_month[0])
         print(day_month[1])
-
+#this is a test function
 def month_test():
     months = {"Janeiro": "01","Fevereiro": "02","Março": "03","Abril": "04","Maio": "05",
         "Junho": "06","Julho": "07","Agosto": "08","Setembro": "09","Outubro": "10","Novembro": "11",
         "Dezembro": "12"} #this is a dictionary
     print(months["Janeiro"])
 
+
 def main():
     #test()
-    #sWord = SearchWord()
-    #sWord.set_nameFile('ourobranco.txt')
+    sWord = SearchWord()
+    sWord.set_nameFile('ourobranco.txt')
     #sWord.findLineByLine()
-    #for node in sWord.day_months:
-        #print(node.get_day()," ",node.get_month()," ", node.get_word())
-    month_test()
+    sWord.findBlockByBlock()
+    for node in sWord.day_months:
+        print(node.get_day()," ",node.get_month()," ", node.get_word())
+    #month_test()
 if __name__ == "__main__":
     main()
