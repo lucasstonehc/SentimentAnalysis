@@ -6,6 +6,9 @@
 
 import os
 import requests
+from SearchWord import SearchWord
+import xlsxwriter
+from openpyxl import Workbook
 
 class Linker():
 
@@ -26,8 +29,7 @@ class Linker():
 #the class calender has been manipulete all elements and things that have connected with it
 class CalenderCrawler():
 
-    def __init__(self, driver):
-        self.driver = driver
+    def __init__(self):
         self.urlsCalenders = []
 
     def set_all_links(self):
@@ -51,13 +53,6 @@ class CalenderCrawler():
                 name = 'ifmg-conselheirolafaiete', 
                 level = 'tecnico', 
                 link = 'https://www.ifmg.edu.br/conselheirolafaiete/ensino-1/arquivos-ensino/calendario-academico-ifmg-cl-2019-ensino-medio-integrado-corrigido10jun.pdf' 
-            )
-        )
-        self.urlsCalenders.append(
-            Linker(
-                name = 'ifmg-conselheirolafaiete', 
-                level = 'tecnico', 
-                link = 'https://www.ifmg.edu.br/congonhas/ensino-1/Calendrio2019TcnicoIntegrado.pdf' 
             )
         )
         self.urlsCalenders.append(
@@ -92,7 +87,7 @@ class CalenderCrawler():
             Linker(
                 name = 'ifmg-itabirito', 
                 level = 'tecnico', 
-                link = '' 
+                link = 'https://drive.google.com/file/d/1-b3WZKY6UMEFoPC09sxLGBE-qdaOJdka/view' 
             )
         )
         self.urlsCalenders.append(
@@ -144,25 +139,26 @@ class CalenderCrawler():
                 link = 'https://www.ifmg.edu.br/arcos/ensino-1/CalendarioAcademico2019.pdf' 
             )
         )
+
         self.urlsCalenders.append(
             Linker(
-                name = 'ifmg-arcos', 
+                name = 'ifmg-ibirite', 
                 level = 'tecnico', 
-                link = '' 
+                link = 'https://www.ifmg.edu.br/ibirite/ensino-1/documentos-ensino/20190809Calendrio2019Ibirit_TECNICO.pdf' 
             )
         )
         self.urlsCalenders.append(
             Linker(
-                name = 'ifmg-arcos', 
+                name = 'ifmg-santaluzia', 
                 level = 'tecnico', 
-                link = '' 
+                link = 'https://www.ifmg.edu.br/santaluzia/ensino-1/horario-de-aulas-2019-2/calendario-ano-letivo-2019-datas-e-prazos-internos_corrigido-sexta-2-semestre-site.pdf' 
             )
         )
         self.urlsCalenders.append(
             Linker(
-                name = 'ifmg-arcos', 
+                name = 'ifmg-bambui', 
                 level = 'tecnico', 
-                link = '' 
+                link = 'http://www.bambui.ifmg.edu.br/portal/images/PDF/2019/Calend%C3%A1rio_Acad%C3%AAmico_-_2019.pdf' 
             )
         )
 
@@ -194,19 +190,47 @@ class CalenderCrawler():
                     print('something went wrong!')
                 finally:
                     file.close()
+    
+    def calender_clusters(self, listOfLinks):
+        sWord = SearchWord()
+        workbook = Workbook() #this line is to save it
+        sheet = workbook.active
+        count = 1
+        for campus in listOfLinks:
+            print('The campus '+campus.name+' is processing ...')
+            sWord.set_nameFile(campus.name+'-'+campus.level+'.txt') #this is name what file i would open it
+            sheet['A'+str(count)] = campus.name
+            if campus.name == 'ifmg-ouropreto'  or campus.name == 'ifmg-ourobranco':
+                sWord.findLineByLine() 
+            else:
+                sWord.findBlockByBlock()
+            count+=1
+            for node in sWord.day_months:
+                #print(node.get_day()," ",node.get_month()," ", node.get_word())
+                
+                sheet['A'+str(count)] = node.get_day()
+                sheet['B'+str(count)] = node.get_month()
+                sheet['C'+str(count)] = node.get_word()
+                count+=1
 
+            sWord.day_months = [] #make the variable day_months to be empty again
+        workbook.save(filename = "cluster_calenders.xlsx")
 def main():
+    tag = 2
     #the process is get calender into web and save it. after this we have must convert them in txt.
-    calender = CalenderCrawler(driver=None)
+    calender = CalenderCrawler()
 
     calender.set_all_links() #this function has all links where there are calenders files
 
     list_of_calenders_urls = calender.urlsCalenders
+    if tag == 1:
+        calender.getCalender(list_of_calenders_urls) #This function will get calenders from web and save it
 
-    calender.getCalender(list_of_calenders_urls) #This function will get calenders from web and save it
-
-    calender.calenderPDF_to_calenderTXT(list_of_calenders_urls)#this function convert pdf file to text file.
-   
+        calender.calenderPDF_to_calenderTXT(list_of_calenders_urls)#this function convert pdf file to text file.
+    
+    if tag == 2:
+        calender.calender_clusters(list_of_calenders_urls) #return to us all dates
+      
 
 if __name__ == "__main__":
     main()
