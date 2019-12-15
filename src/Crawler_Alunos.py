@@ -19,6 +19,7 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 import pandas as pd
 import re
+from kmeans import k_means_get_anxiety_twitters
 
 #Dados de conta
 consumer_key ='5W7W6BSMHMsEtnLNNUJSo4jcs'
