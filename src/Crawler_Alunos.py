@@ -27,7 +27,25 @@ consumer_secret ='XJi5T7Ta5Co18Hbfgh1HvNubZ9pccx8y8q5uqUto5h8Sk9swo6'
 access_key = '954784886157643778-buXhPhSb4eysyJVq01xTymPpzJBFO6a'
 access_secret = 'yIFSSTBhzx1ZblAXa9ecrWKHuEtrZ2KJhur7Ddecf750G'
 
-
+months = k_means_get_anxiety_twitters()
+str_months = []
+mth = {
+	0: 'Jan',
+	1: 'Jan',
+	2: 'Feb',
+	3: 'Mar',
+	4: 'Apr',
+	5: 'May',
+	6: 'Jun',
+	7: 'Jul',
+	8: 'Aug',
+	9: 'Sep',
+	10: 'Oct',
+	11: 'Nov',
+	12: 'Dec'
+}
+for i in months:
+	str_months.append(mth[i])
 #Funcao que coleta todos os tweets
 def get_all_tweets(screen_name):
 
@@ -38,7 +56,7 @@ def get_all_tweets(screen_name):
     alltweets = []  
     new_tweets = []
     outtweets = []
-
+	#here we need do for to get all twitters of dates.
     new_tweets = api.user_timeline(screen_name = screen_name,count=200,retweet=False,full_text= True)
 
     alltweets.extend(new_tweets)
@@ -177,26 +195,30 @@ def write_worksheet(id_str):
 		cord1 = 0
 		cord2 = 0
 		write = [o_item[0], o_item[1], o_item[4], o_item[5]]
+		date = write[1]
+		month = date.strftime(r"%b") #get month from date
+		day = date.strftime(r"%d")	#get day from date
+		for imonth in str_months:
+			if month == imonth:
+				if o_item[2]:
+					cord1 = o_item[2]['coordinates'][0]
+					cord2 = o_item[2]['coordinates'][1]
+				else:
+					cord1 = ""
+					cord2 = ""
 
-		if o_item[2]:
-			cord1 = o_item[2]['coordinates'][0]
-			cord2 = o_item[2]['coordinates'][1]
-		else:
-			cord1 = ""
-			cord2 = ""
-
-		format01.set_num_format('yyyy/mm/dd hh:mm:ss')
-		worksheet.write(row, 0, write[0], format02)
-		worksheet.write(row, 1, write[1], format01)
-		worksheet.write(row, 2, cord1, format02)
-		worksheet.write(row, 3, cord2, format02)
-		worksheet.write(row, 4, write[2], format02)
-		line = clear_twitter(write[3]) #clear the twitter 
-		worksheet.write(row, 5,line, format04) #this column had text
-		season = seasons_of_tweet(write[1]) #set which season it is.
-		worksheet.write(row, 6, season, format04)
-		row += 1
-		col = 0
+				format01.set_num_format('yyyy/mm/dd')
+				worksheet.write(row, 0, write[0], format02)
+				worksheet.write(row, 1, write[1], format01)
+				worksheet.write(row, 2, cord1, format02)
+				worksheet.write(row, 3, cord2, format02)
+				worksheet.write(row, 4, write[2], format02)
+				line = clear_twitter(write[3]) #clear the twitter 
+				worksheet.write(row, 5,line, format04) #this column had text
+				season = seasons_of_tweet(write[1]) #set which season it is.
+				worksheet.write(row, 6, season, format04)
+				row += 1
+				col = 0
 
 
 workbook = xlsxwriter.Workbook('alltwittersprofile.xlsx')

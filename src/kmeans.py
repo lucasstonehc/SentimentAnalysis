@@ -9,7 +9,7 @@ from collections import defaultdict
 import re
 
 matplotlib.use('TkAgg')
-
+centroids = None
 
 def has_days_in_month(month):
     months = {
@@ -52,7 +52,8 @@ def day_month_transform(day, month):
     else:
         return (day*minutes) + months_acc[month-1]
 
-def k_means():
+def k_means_get_anxiety_twitters():
+    months = []
     words = {
         'Prova de Proficiência':1,
         'Avaliação Global':2,
@@ -113,12 +114,15 @@ def k_means():
     #b = month
     #vector one to month currently
     #vector two to minutes 
-    clustering = DBSCAN(eps=1, min_samples=3).fit(arr)
+   
+    clustering = DBSCAN(eps=12, min_samples=4).fit(arr)
     k = len(list(dict.fromkeys(clustering.labels_)))
-    print(k)
+
     Kmean = KMeans(n_clusters=k)
     Kmean.fit(arr)
     centroids = Kmean.cluster_centers_
+    #here started code to show the elements
+    '''
     print(centroids)
     plt.xlabel("Metrica")
     plt.ylabel("Targets of calenders")
@@ -126,10 +130,19 @@ def k_means():
     for i in range(0,len(centroids),1):
         plt.scatter(centroids[i][0], centroids[i][1], s= len(arr), c='g', marker='s')
     plt.show()
+    '''
+    #prints days
+    for i in range(0,len(centroids),1):
+        #print('day ',int(centroids[i][0]/1440))
+        #print('Month', int((centroids[i][0]/1440)/30))
+        months.append(int((centroids[i][0]/1440)/30))
 
-
-
+    #to do comparation
+    #totally of twitters - (anxiety twitters + date twitters)
+    return months
+'''
 if __name__ == '__main__':
     #kmeans_with_month()
-    k_means()
-   
+    for month in k_means_get_anxiety_twitters():
+        print(month)
+''' 

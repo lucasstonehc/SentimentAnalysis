@@ -36,7 +36,7 @@ def get_all_tweets(q):
     
 
 	#Variável que irá armazenar todos os Tweets com a palavra escolhida na função search da API
-    new_tweets = api.search(q,lang='pt',locale='brazil',rpp=100,count=200)
+    new_tweets = api.search(q,lang='pt',locale='brazil',rpp=200,count=200)
 	#A medida em que existirem novos twetts,a lista alltweets vai recebendo dados
     alltweets.extend(new_tweets)
 
@@ -47,7 +47,7 @@ def get_all_tweets(q):
     while len(new_tweets) > 0:
 
         #Agora dentro do loop,iremos procurar a palvra-chave e acrescentar a variável max_id que evitará duplicatas
-        new_tweets = api.search(q,lang='pt',locale='brazil',rpp=100,count=200,max_id=oldest) 
+        new_tweets = api.search(q,lang='pt',locale='brazil',rpp=200,count=1500,max_id=oldest) 
 		
         #Salva twittes mais recentes
         alltweets.extend(new_tweets)
@@ -110,8 +110,8 @@ def write_worksheet(q):
         write = [o_item[0], o_item[1], o_item[3],o_item[4], o_item[5]]
         #print(o_item[0])
         #print(o_item[1])
-        print(o_item[2])
-        print(o_item[3])
+        #print(o_item[2])
+        #print(o_item[3])
         #print(o_item[4])
         #print(o_item[5])
         '''
